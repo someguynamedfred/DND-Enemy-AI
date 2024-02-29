@@ -1,5 +1,8 @@
 import random
 
+named_enemies = []
+combat_unit = []
+
 class combatant:
     def __init__(self, name, hp, ac, initiative, to_hit, damage, priority):
         self.name = name
@@ -9,14 +12,10 @@ class combatant:
         self.to_hit = to_hit
         self.damage = damage
         self.priority = priority
+
     def __str__(self):
-        return (
-            "{} rolled a {} for initiative. {} has {} HP.\n"
-            "His AC is {} and he rolled a {} to hit. If he hits, he does {} damage.\n"
-            "When he attacks, he attacks {}.\n\n"
-            .format((self.name), (self.initiative), (self.name), (self.hp), 
-                    (self.ac), (self.to_hit), (self.damage), (self.priority))
-               )
+        return ("{} \t| {} HP | {} AC | {} Init".format(self.name, self.hp, self.ac, self.initiative))
+
 
 def dice_roller(number_dice, number_sides, modifier):
     dice_list = []
@@ -25,55 +24,81 @@ def dice_roller(number_dice, number_sides, modifier):
         dice_list.append(dice)
     return(sum(dice_list))
 
-def assign_priority():
-    n = random.randint(0, len(priority_target) - 1)
-    return(priority_target[n])
-    
+def assign_priority(): #this assigns the priority target
+    target = random.randint(0, len(priority_target) - 1)
+    return(priority_target[target])
+
+def name_assign(enemy_number):
+    n = 1 # this variable just determines who is captain
+    y = 1 # this variable assigns a number to each non-captain combatant to keep track of them
+    while enemy_number > 0:
+        if n == 1:
+            eeny_meeny = random.randint(0, len(leader_callsigns) - 1)
+            enemy_name = ("Capt. {}".format(horror_first_names[eeny_meeny]))
+            n = 0
+        else:
+            eeny_meeny = random.randint(0, len(name_list) - 1)
+            enemy_name = ("{}. {}".format( y, name_list[eeny_meeny]))
+            y += 1
+        named_enemies.append(enemy_name)
+        enemy_number -= 1
+    return
+
+def dice_roller(number_dice, number_sides, modifier):
+    dice_list = []
+    for dice in range(number_dice):
+        dice = random.randint(1, number_sides) + modifier
+        dice_list.append(dice)
+    return(sum(dice_list))
+
+def roll_initiative_in_call_initiative(number):
+    rolls = []
+    for n in range(number):
+        roll = dice_roller(1, 20, 3)
+        rolls.append(roll)
+    return sorted(rolls)
+
 def call_initiative(number_of_enemies):
+    initiative_rolls = roll_initiative_in_call_initiative(number_of_enemies)
     name_assign(number_of_enemies)
     for enemy in named_enemies:
         enemy = combatant(
             enemy, 
-            45, #hp
-            12, #ac
-            dice_roller(1, 20, 2), #initiative
+            random.randint(20, 55), #hp
+            random.randint(11, 17), #ac
+            initiative_rolls[-1], #initiative
             0, #to_hit
             0, #damage
             priority_target[
                 random.randint(0, len(priority_target) - 1)
                 ])
         print(enemy)
+        initiative_rolls.pop(-1)
         combat_unit.append(enemy)
 
-def damage_combatant(combatant, damage):
+def damage_combatant(combatant_number, damage):
+    combatant = combat_unit[combatant_number]
     combatant.hp = combatant.hp - damage
     print("{} takes {} damage with {} HP remaining".format(combatant.name, damage, combatant.hp))
+
 
 def attack_round():
     for enemy in (combat_unit):
         enemy.to_hit = dice_roller(1, 20, 3)
         enemy.damage = dice_roller(2, 6, 3)
-        enemy.priority_target = assign_priority()
-        print(enemy)
+        enemy.priority = assign_priority()
+        print(
+            "{} rolled a {} for initiative. {} has {} HP.\n"
+            "His AC is {} and he rolled a {} to hit. If he hits, he does {} damage.\n"
+            "When he attacks, he attacks {}.\n\n"
+            .format((enemy.name), (enemy.initiative), (enemy.name), (enemy.hp), 
+                    (enemy.ac), (enemy.to_hit), (enemy.damage), (enemy.priority)
+                    ))
 
-def name_assign(enemy_number):
-    n = 1
-    y = 1
-    while enemy_number > 0:
-        if n == 1:
-            eeny_meeny = random.randint(0, len(leader_callsigns) - 1)
-            enemy_name = horror_first_names[eeny_meeny]
-            n = 0
-        else:
-            eeny_meeny = random.randint(0, len(name_list) - 1)
-            enemy_name = ("{} | {}".format( y, name_list[eeny_meeny]))
-            y += 1
-        named_enemies.append(enemy_name)
-        enemy_number -= 1
-    return
 
-named_enemies = []
-combat_unit = []
+def update_combat():
+    for enemy in combat_unit:
+        print("{} \t| {} HP | {} AC | {} Init".format(enemy.name, enemy.hp, enemy.ac, enemy.initiative))
  
 name_list = [
     "James", "John", "Robert", "Michael", "William", "David", "Joseph", "Charles", "Thomas", "Daniel",
