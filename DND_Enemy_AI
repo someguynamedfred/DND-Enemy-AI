@@ -1,0 +1,109 @@
+import random
+
+class combatant:
+    def __init__(self, name, hp, ac, initiative, to_hit, damage, priority):
+        self.name = name
+        self.hp = hp
+        self.ac = ac
+        self.initiative = initiative
+        self.to_hit = to_hit
+        self.damage = damage
+        self.priority = priority
+    def __str__(self):
+        return (
+            "{} rolled a {} for initiative. {} has {} HP.\n"
+            "His AC is {} and he rolled a {} to hit. If he hits, he does {} damage.\n"
+            "When he attacks, he attacks {}.\n\n"
+            .format((self.name), (self.initiative), (self.name), (self.hp), 
+                    (self.ac), (self.to_hit), (self.damage), (self.priority))
+               )
+
+def dice_roller(number_dice, number_sides, modifier):
+    dice_list = []
+    for dice in range(number_dice):
+        dice = random.randint(1, number_sides) + modifier
+        dice_list.append(dice)
+    return(sum(dice_list))
+
+def assign_priority():
+    n = random.randint(0, len(priority_target) - 1)
+    return(priority_target[n])
+    
+def call_initiative(number_of_enemies):
+    name_assign(number_of_enemies)
+    for enemy in named_enemies:
+        enemy = combatant(
+            enemy, 
+            45, #hp
+            12, #ac
+            dice_roller(1, 20, 2), #initiative
+            0, #to_hit
+            0, #damage
+            priority_target[
+                random.randint(0, len(priority_target) - 1)
+                ])
+        print(enemy)
+        combat_unit.append(enemy)
+
+def damage_combatant(combatant, damage):
+    combatant.hp = combatant.hp - damage
+    print("{} takes {} damage with {} HP remaining".format(combatant.name, damage, combatant.hp))
+
+def attack_round():
+    for enemy in (combat_unit):
+        enemy.to_hit = dice_roller(1, 20, 3)
+        enemy.damage = dice_roller(2, 6, 3)
+        enemy.priority_target = assign_priority()
+        print(enemy)
+
+def name_assign(enemy_number):
+    n = 1
+    y = 1
+    while enemy_number > 0:
+        if n == 1:
+            eeny_meeny = random.randint(0, len(leader_callsigns) - 1)
+            enemy_name = horror_first_names[eeny_meeny]
+            n = 0
+        else:
+            eeny_meeny = random.randint(0, len(name_list) - 1)
+            enemy_name = ("{} | {}".format( y, name_list[eeny_meeny]))
+            y += 1
+        named_enemies.append(enemy_name)
+        enemy_number -= 1
+    return
+
+named_enemies = []
+combat_unit = []
+ 
+name_list = [
+    "James", "John", "Robert", "Michael", "William", "David", "Joseph", "Charles", "Thomas", "Daniel",
+    "Matthew", "Anthony", "Donald", "Mark", "Paul", "Steven", "Andrew", "Kenneth", "George", "Joshua",
+    "Kevin", "Brian", "Edward", "Ronald", "Timothy", "Jason", "Jeffrey", "Ryan", "Gary", "Jacob",
+    "Nicholas", "Eric", "Stephen", "Jonathan", "Larry", "Scott", "Frank", "Justin", "Brandon", "Raymond",
+    "Gregory", "Benjamin", "Samuel", "Patrick", "Jack", "Dennis", "Jerry", "Alexander", "Tyler", "Henry",
+    "Douglas", "Peter", "Aaron", "Jose", "Adam", "Zachary", "Walter", "Nathan", "Harold", "Kyle",
+    "Carl", "Arthur", "Gerald", "Roger", "Keith", "Lawrence", "Jeremy", "Terry", "Joe", "Sean",
+    "Willie", "Jesse", "Billy", "Bryan", "Bruce", "Christian", "Roy", "Jordan", "Ralph", "Noah",
+    "Ethan", "Harry", "Louis", "Wayne", "Alan", "Eugene", "Juan", "Russell", "Randy", "Philip",
+    "Vincent", "Gabriel", "Bobby", "Johnny", "Howard", "Albert", "Frederick", "Ronnie", "Barry", "Tyler",
+    "Arthur"
+]
+
+horror_first_names = [
+    "Freddy", "Jason", "Michael", "Pennywise", "Chucky", "Leatherface", "Ghostface", "Samara", "Norman",
+    "Hannibal", "Regan", "Jigsaw", "Carrie", "Pinhead", "Annie", "Jack", "Candyman", "Babadook", "Kayako",
+    "Patrick", "Ash", "Laurie", "Elm", "Victor", "Tiffany", "Leprechaun", "Damien", "Ashley", "Nancy",
+    "Juno", "Clarice", "Gizmo", "Morticia", "Gomez", "Beetlejuice", "Mia", "Sidney", "Ripley", "Sweeney",
+    "Michael", "Grant Grant"
+]
+
+leader_callsigns = [
+    "Timberwolf", "Red One", "Devin",  "Atlas", "Grasshopper", "Urb", "Toby Keith", "Grub", "Rastlehaag", "Azael",  
+    "Claymore", "Garlington", "Melon" , "Mick", "Vlad", "Spearhead" , "Crab" , "MacReady", "Grid", "Toaster", 
+    "Arson", "Grit", "Marmot", "Raze", "Thuraya", "Theran", "Battlemaster", "Ween", "Neckbear", "Fedora", "Catapult", 
+    "Bonebreaker", "Destiny", "Onslaught",  "Red", "Mister Johnson", "Nut-Buster", "Marrow", "Domo", "Abominate", "Bart", "Grant Grant"
+]
+
+priority_target = [
+    "weakest player", "closest player", "strongest player"
+]
